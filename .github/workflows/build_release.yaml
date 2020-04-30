@@ -10,9 +10,9 @@ jobs:
       - name: Cargo build
         run: cargo build --verbose
       - name: Build debug
-        run: bash ./script/build_debug.sh
+        run: bash ./script/build.sh
       - name: Build release
-        run: bash ./script/build_release.sh
+        run: bash ./script/build.sh --release
   test:
     runs-on: ubuntu-latest
     needs: [ build ]
