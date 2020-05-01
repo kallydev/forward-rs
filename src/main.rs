@@ -21,12 +21,22 @@ impl IServer for Server {
         let (client, server) = (self.client.clone(), self.server.clone());
         let listener = net::TcpListener::bind(client).unwrap();
         for stream in listener.incoming() {
-            let src = stream.unwrap();
-            let server = server.clone();
-            thread::spawn(move || {
-                let dst = net::TcpStream::connect(server).unwrap();
-                forward(src, dst);
-            });
+            match stream {
+                Ok(src) => {
+                    let server = server.clone();
+                    thread::spawn(move || match net::TcpStream::connect(server) {
+                        Ok(dst) => {
+                            forward(src, dst);
+                        }
+                        Err(error) => {
+                            eprintln!("{}", error);
+                        }
+                    });
+                }
+                Err(error) => {
+                    eprintln!("{}", error);
+                }
+            }
         }
     }
 }
@@ -36,20 +46,26 @@ fn forward(src: net::TcpStream, dst: net::TcpStream) {
     let (mut dst_read, mut dst_write) = (dst.try_clone().unwrap(), dst.try_clone().unwrap());
     let threads = vec![
         thread::spawn(move || match io::copy(&mut src_read, &mut dst_write) {
-            _ => {
-                return;
-            }
+            _ => {}
         }),
         thread::spawn(move || match io::copy(&mut dst_read, &mut src_write) {
-            _ => {
-                return;
-            }
+            _ => {}
         }),
     ];
     for t in threads {
         t.join().unwrap();
-        src.shutdown(net::Shutdown::Both).unwrap();
-        dst.shutdown(net::Shutdown::Both).unwrap();
+        match src.shutdown(net::Shutdown::Both) {
+            Err(error) => {
+                eprintln!("{}", error);
+            }
+            _ => {}
+        }
+        match dst.shutdown(net::Shutdown::Both) {
+            Err(error) => {
+                eprintln!("{}", error);
+            }
+            _ => {}
+        }
     }
 }
 
