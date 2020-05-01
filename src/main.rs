@@ -1,6 +1,6 @@
+use std::{env, io};
 use std::net;
 use std::thread;
-use std::{env, io};
 
 struct Server {
     client: String,
@@ -34,7 +34,6 @@ impl IServer for Server {
 fn forward(src: net::TcpStream, dst: net::TcpStream) {
     let (mut src_read, mut src_write) = (src.try_clone().unwrap(), src.try_clone().unwrap());
     let (mut dst_read, mut dst_write) = (dst.try_clone().unwrap(), dst.try_clone().unwrap());
-
     let threads = vec![
         thread::spawn(move || match io::copy(&mut src_read, &mut dst_write) {
             _ => {
@@ -49,6 +48,8 @@ fn forward(src: net::TcpStream, dst: net::TcpStream) {
     ];
     for t in threads {
         t.join().unwrap();
+        src.shutdown(net::Shutdown::Both).unwrap();
+        dst.shutdown(net::Shutdown::Both).unwrap();
     }
 }
 
@@ -58,6 +59,5 @@ fn main() {
         println!("forward <client_addr> <server_addr>");
         return;
     }
-
     Server::new(args[1].to_string(), args[2].to_string()).run();
 }
