@@ -1,8 +1,10 @@
 # Forward
 
-![GitHub last commit](https://img.shields.io/github/last-commit/yogurtcloud/forward?style=flat-square)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/yogurtcloud/forward?style=flat-square)
-![GitHub license](https://img.shields.io/github/license/yogurtcloud/forward?style=flat-square)
+![GitHub Last Commit](https://img.shields.io/github/last-commit/kallydev/forward?style=flat-square)
+![GitHub License](https://img.shields.io/github/license/kallydev/forward?style=flat-square)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/kallydev/forward/Build%20release)](https://github.com/kallydev/forward/actions)
+
+A TCP reverse proxy server.
 
 ## Instructions
 
@@ -23,10 +25,7 @@ Usage example.
 ## Todo
 
 - [ ] UDP forward
-- [ ] SSL/TLS support
-- [ ] Load balancing
 - [ ] Config support
-- [ ] CI service
 
 ## License
 
