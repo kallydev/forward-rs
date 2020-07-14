@@ -24,12 +24,14 @@ impl IServer for Server {
             match stream {
                 Ok(src) => {
                     let server = server.clone();
-                    thread::spawn(move || match net::TcpStream::connect(server) {
-                        Ok(dst) => {
-                            forward(src, dst);
-                        }
-                        Err(error) => {
-                            eprintln!("{}", error);
+                    thread::spawn(|| {
+                        match net::TcpStream::connect(server) {
+                            Ok(dst) => {
+                                forward(src, dst);
+                            }
+                            Err(error) => {
+                                eprintln!("{}", error);
+                            }
                         }
                     });
                 }
